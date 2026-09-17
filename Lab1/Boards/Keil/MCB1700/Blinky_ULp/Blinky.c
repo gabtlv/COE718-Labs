@@ -1,31 +1,20 @@
-#include <stdio.h>
-#include "LPC17xx.h"                    // Device header
-#include "LED.h"                        // matches IRQ.c's LED driver
-#include "Board_ADC.h"                  // ::Board Support:A/D Converter
-#include "KBD.h"                        // Joystick driver (Lab 1)
+#include "LPC17xx.h"
+#include "LED.h"
+#include "Board_ADC.h"
+#include "KBD.h"
 
-// #define _USE_LCD
+#define _USE_LCD           // comment this out when running in Debug/simulation mode
 #ifdef _USE_LCD
   #include "GLCD.h"
 #endif
 
-char text[10];
-
-extern uint8_t clock_ms;                // matches IRQ.c's actual variable name
-
-volatile unsigned short AD_dbg;
-
-uint16_t ADC_last;                      // matches name IRQ.c expects (was AD_last)
-
 int main (void) {
-  int32_t  res;
-  uint32_t AD_avg   = 0;
-  uint16_t AD_value = 0;
-  uint16_t AD_print = 0;
   uint32_t joy;
+  uint32_t last_joy = 0xFFFFFFFF;   // forces the LCD to draw on the very first loop
 
-  LED_Init();                           // matches LED.h's actual init function
-  ADC_Initialize();
+  LED_Init();
+  ADC_Initialize();        // still required: IRQ.c's SysTick handler still triggers
+                            // ADC conversions each tick, even though we ignore the result
   KBD_Init();
 
 #ifdef _USE_LCD
@@ -33,65 +22,45 @@ int main (void) {
   GLCD_SetForegroundColor(GLCD_COLOR_WHITE);
   GLCD_SetBackgroundColor(GLCD_COLOR_BLUE);
   GLCD_ClearScreen();
-  GLCD_DrawString(10, 10, "COE718 Lab 1 - Joystick Demo");
+  GLCD_DrawString(10, 10, "COE718 Lab 1");
+  GLCD_DrawString(10, 25, "Joystick Direction Demo");
 #endif
 
   SystemCoreClockUpdate();
   SysTick_Config(SystemCoreClock/100);
 
   while (1) {
-
-    res = ADC_GetValue();
-    if (res != -1) {
-      ADC_last = res;
-
-      AD_avg += ADC_last << 8;
-      AD_avg ++;
-      if ((AD_avg & 0xFF) == 0x10) {
-        AD_value = (AD_avg >> 8) >> 4;
-        AD_avg = 0;
-      }
-    }
-
-    if (AD_value != AD_print) {
-      AD_print = AD_value;
-      AD_dbg   = AD_value;
-
-      sprintf(text, "0x%04X", AD_value);
-    }
-
     joy = get_button();
 
-    if (joy & KBD_UP) {
-      LED_On(0);  LED_Off(1); LED_Off(2); LED_Off(3);
-#ifdef _USE_LCD
-      GLCD_DrawString(10, 40, "Direction: UP    ");
-#endif
-    } else if (joy & KBD_DOWN) {
-      LED_Off(0); LED_On(1);  LED_Off(2); LED_Off(3);
-#ifdef _USE_LCD
-      GLCD_DrawString(10, 40, "Direction: DOWN  ");
-#endif
-    } else if (joy & KBD_LEFT) {
-      LED_Off(0); LED_Off(1); LED_On(2);  LED_Off(3);
-#ifdef _USE_LCD
-      GLCD_DrawString(10, 40, "Direction: LEFT  ");
-#endif
-    } else if (joy & KBD_RIGHT) {
-      LED_Off(0); LED_Off(1); LED_Off(2); LED_On(3);
-#ifdef _USE_LCD
-      GLCD_DrawString(10, 40, "Direction: RIGHT ");
-#endif
-    } else if (joy & KBD_SELECT) {
-#ifdef _USE_LCD
-      GLCD_DrawString(10, 40, "Direction: SELECT");
-#endif
-    }
+    if (joy != last_joy) {         // only touch LEDs/LCD when direction changes
+      last_joy = joy;
 
-    if (clock_ms) {
-      clock_ms = 0;
-
-      printf("AD value: %s\r\n", text);
+      if (joy & KBD_UP) {
+        LED_On(0);  LED_Off(1); LED_Off(2); LED_Off(3);
+#ifdef _USE_LCD
+        GLCD_DrawString(10, 50, "Direction: UP    ");
+#endif
+      } else if (joy & KBD_DOWN) {
+        LED_Off(0); LED_On(1);  LED_Off(2); LED_Off(3);
+#ifdef _USE_LCD
+        GLCD_DrawString(10, 50, "Direction: DOWN  ");
+#endif
+      } else if (joy & KBD_LEFT) {
+        LED_Off(0); LED_Off(1); LED_On(2);  LED_Off(3);
+#ifdef _USE_LCD
+        GLCD_DrawString(10, 50, "Direction: LEFT  ");
+#endif
+      } else if (joy & KBD_RIGHT) {
+        LED_Off(0); LED_Off(1); LED_Off(2); LED_On(3);
+#ifdef _USE_LCD
+        GLCD_DrawString(10, 50, "Direction: RIGHT ");
+#endif
+      } else if (joy & KBD_SELECT) {
+        LED_Off(0); LED_Off(1); LED_Off(2); LED_Off(3);
+#ifdef _USE_LCD
+        GLCD_DrawString(10, 50, "Direction: SELECT");
+#endif
+      }
     }
   }
 }
