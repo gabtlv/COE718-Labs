@@ -1,21 +1,21 @@
 #include <stdio.h>
 #include "LPC17xx.h"                    // Device header
-#include "Board_LED.h"                  // ::Board Support:LED
+#include "LED.h"                        // matches IRQ.c's LED driver
 #include "Board_ADC.h"                  // ::Board Support:A/D Converter
 #include "KBD.h"                        // Joystick driver (Lab 1)
 
-// #define _USE_LCD                     // uncomment once GLCD component is added
+// #define _USE_LCD
 #ifdef _USE_LCD
-  #include "GLCD.h"                     // confirm exact header name once RTE component is added
+  #include "GLCD.h"
 #endif
 
 char text[10];
 
-extern volatile unsigned char clock_1s;
+extern uint8_t clock_ms;                // matches IRQ.c's actual variable name
 
 volatile unsigned short AD_dbg;
 
-uint16_t AD_last;
+uint16_t ADC_last;                      // matches name IRQ.c expects (was AD_last)
 
 int main (void) {
   int32_t  res;
@@ -24,7 +24,7 @@ int main (void) {
   uint16_t AD_print = 0;
   uint32_t joy;
 
-  LED_Initialize();
+  LED_Init();                           // matches LED.h's actual init function
   ADC_Initialize();
   KBD_Init();
 
@@ -43,9 +43,9 @@ int main (void) {
 
     res = ADC_GetValue();
     if (res != -1) {
-      AD_last = res;
+      ADC_last = res;
 
-      AD_avg += AD_last << 8;
+      AD_avg += ADC_last << 8;
       AD_avg ++;
       if ((AD_avg & 0xFF) == 0x10) {
         AD_value = (AD_avg >> 8) >> 4;
@@ -88,8 +88,8 @@ int main (void) {
 #endif
     }
 
-    if (clock_1s) {
-      clock_1s = 0;
+    if (clock_ms) {
+      clock_ms = 0;
 
       printf("AD value: %s\r\n", text);
     }
