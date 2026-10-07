@@ -60,5 +60,5 @@ The LCD driver (`GLCD_SPI_LPC1700.c`, `GLCD.h`, `Font_*.h`) and the device start
 
 ## Author
 
-Gabrell (Gab) Talavera, Computer Engineering, Toronto Metropolitan University
+Gab Talavera, Computer Engineering, Toronto Metropolitan University
 [GitHub](https://github.com/gabtlv) · [LinkedIn](https://linkedin.com/in/gabtlv) · [Portfolio](https://gabtlv.vercel.app)
