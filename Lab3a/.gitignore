@@ -1,0 +1,30 @@
+# Keil uVision build output (regenerated on every build)
+Objects/
+Listings/
+*.axf
+*.hex
+*.htm
+*.map
+*.lnp
+*.sct
+*.dep
+*.crf
+*.o
+*.d
+*.lst
+*.build_log.htm
+
+# Per-user / per-PC IDE state (lab PC user is ECBME, laptop user is simpl)
+*.uvguix.*
+*.uvoptx.bak
+*.uvprojx.bak
+*.bak
+*.orig
+JLinkLog.txt
+JLinkSettings.ini
+EventRecorderStub.scvd
+
+# OS clutter
+Thumbs.db
+desktop.ini
+.DS_Store
