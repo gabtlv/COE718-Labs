@@ -4,3 +4,4 @@ Lst/
 *.bak
 *.dep
 build_log.txt
+flash_log.txt

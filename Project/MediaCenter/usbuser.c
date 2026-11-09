@@ -91,6 +91,8 @@ void USB_WakeUp_Event (void) {
 
 #if USB_SOF_EVENT
 void USB_SOF_Event (void) {
+  extern volatile uint32_t SofCount;
+  SofCount++;                               /* debug: count USB frames */
 #if USB_DMA == 0
   if (USB_ReadEP(0x03, (BYTE *)&DataBuf[DataIn])) {
     /* Data Available */

@@ -26,6 +26,7 @@
 #include "input.h"
 #include "GLCD.h"
 #include "LED.h"
+#include <stdio.h>
 
 /* 1 = counter-clockwise raises the volume (as the project manual asks).
    If it turns out backwards on the board, set this to 0. */
@@ -52,6 +53,8 @@ uint16_t PotVal;                               /* Potentiometer, 0..256      */
 uint32_t VUM;                                  /* VU meter accumulator       */
 uint32_t Tick;                                 /* Time tick                  */
 
+static uint8_t usb_ready = 0;                  /* USB_Init() already done    */
+volatile uint32_t SofCount;                    /* USB frames seen (debug)    */
 static volatile uint8_t LocalMute;             /* mute toggled with SELECT   */
 static volatile uint8_t VULevel;               /* 0..7 audio level           */
 
@@ -138,9 +141,9 @@ static void draw_bar(unsigned int y, unsigned int fill, unsigned short col) {
 
 static void draw_status(uint8_t st) {
   static const char *const msg[3] = {
-    "  Connect USB to PC  ",
-    " Ready: play audio   ",
-    "   Now playing...    "
+    " Connect USB to PC  ",
+    " Ready: play audio  ",
+    "   Now playing...   "
   };
   ui_text_center(56, 1, msg[st], (st == 2) ? C_ACCENT : C_TEXT, C_BG);
 }
@@ -197,9 +200,16 @@ static void mp3_enter(void) {
   NVIC_SetPriority(TIMER0_IRQn, 1);            /* above SysTick, below USB   */
   NVIC_EnableIRQ(TIMER0_IRQn);
 
-  /* USB: initialise and connect (PC sees the speaker appear) */
+  /* USB: initialise the controller once, then just reconnect on later
+     visits (re-initialising it while the PC still knows the device can
+     leave enumeration stuck). The PC sees the speaker appear. */
   NVIC_SetPriority(USB_IRQn, 0);
-  USB_Init();
+  if (!usb_ready) {
+    USB_Init();
+    usb_ready = 1;
+  } else {
+    NVIC_EnableIRQ(USB_IRQn);
+  }
   USB_Connect(TRUE);
 }
 
@@ -235,6 +245,15 @@ void mp3_main(void) {
 
       st = (USB_Configuration == 0) ? 0 : (DataRun ? 2 : 1);
       if (st != last_st) { draw_status(st); last_st = st; }
+
+      {                                        /* debug line: USB state     */
+        char dbg[48];
+        sprintf(dbg, "USB cfg:%u  frames:%lu  stream:%u   ",
+                USB_Configuration, (unsigned long)SofCount, DataRun);
+        GLCD_SetBackColor(C_BG);
+        GLCD_SetTextColor(C_DIM);
+        GLCD_DisplayStringXY(BAR_X, 204, 0, (unsigned char *)dbg);
+      }
 
       if (PotVal != last_pot) {
         draw_bar(VOL_Y, (uint32_t)PotVal * BAR_W / 256, C_ACCENT);
