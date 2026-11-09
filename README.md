@@ -12,6 +12,8 @@ Lab work for **COE718 Embedded Systems Design** (Toronto Metropolitan University
 | [Lab 2](Lab2) | Cortex-M3 features for performance | Compares three ways to drive the LEDs: read-modify-write masking, a bit-band helper function, and direct bit-band alias stores. Also covers conditional execution (IT blocks) and the barrel shifter. The simulator version times each method in the Performance Analyzer. The board version races them as bars on the LCD. |
 | [Lab 3a](Lab3a) | RTX multitasking with round-robin scheduling | CMSIS-RTOS (Keil RTX) projects. **Q1** is a three-thread power-on self-test (RAM march test, prime-count ALU test, CRC-32 integrity check) with 15 ms time slices. **Q2** simulates OS components (memory, CPU, application, device and user management) that coordinate through signals and a mutex. |
 | [Lab 3b](Lab3b) | Pre-emptive (priority) scheduling with RTX | Round-robin off, priority-based pre-emption. **InLab** has the three tutorial exercises (priority starvation, `osThreadYield`, `osDelay`). **Q1** runs five math tasks at three priorities, and the highest-priority task pre-empts another halfway through its work. **Q2** reruns the Lab 3a OS threads with priorities. The board demos use an airport control tower theme: the runway is the CPU and each thread is a flight. |
+| [Lab 4](Lab4) | Real-time scheduling: RMS and priority inversion | **Part 1** schedules three periodic RTX tasks with Rate Monotonic Scheduling (A: 2 s every 4 s, B: 1 s every 4 s, C: 0.5 s every 2 s) using virtual timers, with zero deadline misses in the simulator. **Part 2** recreates the Mars Pathfinder priority inversion bug and fixes it with priority inheritance, switched with a `SOLUTION` macro. |
+| [**Final project**](Project/MediaCenter) | Embedded Media Center | Joystick-driven media center: main menu, photo gallery, USB speaker (MP3 player) streaming audio from a PC, **Minesweeper** and **Flappy Bird**. Interrupt-driven super-loop in C, no RTOS. See [Project/MediaCenter/README.md](Project/MediaCenter/README.md). |
 
 ## Toolchain
 
@@ -49,13 +51,16 @@ See [Lab3a/README.md](Lab3a/README.md) for expected Watch values, the screenshot
 COE718-Labs/
 ├── Lab1/Boards/Keil/MCB1700/Blinky_ULp/   # Lab 1 project
 ├── Lab2/                                  # Lab 2 project (bit banding, IT blocks, barrel shifter)
-└── Lab3a/
-    ├── Lab3a/                             # in-lab RTX round-robin demo
-    ├── Q1_RoundRobin/                     # assignment Q1
-    └── Q2_OS_RoundRobin/                  # assignment Q2
+├── Lab3a/
+│   ├── Lab3a/                             # in-lab RTX round-robin demo
+│   ├── Q1_RoundRobin/                     # assignment Q1
+│   └── Q2_OS_RoundRobin/                  # assignment Q2
+├── Lab3b/                                 # Lab 3b projects (InLab, Q1, Q2)
+├── Lab4/                                  # Lab 4 projects (RMS, Mars Pathfinder)
+└── Project/MediaCenter/                   # final project: Embedded Media Center
 ```
 
-Build output (`Objects/`, `Listings/`) and per-user µVision layout files (`*.uvguix.*`) are git-ignored.
+Build output (`Objects/`, `Listings/`, `Obj/`, `Lst/`) and per-user µVision layout files (`*.uvguix.*`) are git-ignored.
 
 The LCD driver (`GLCD_SPI_LPC1700.c`, `GLCD.h`, `Font_*.h`) and the device startup files come from Keil's MCB1700 examples and are subject to Keil's licence.
 
