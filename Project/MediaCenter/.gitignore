@@ -1,0 +1,6 @@
+Obj/
+Lst/
+*.uvguix.*
+*.bak
+*.dep
+build_log.txt
