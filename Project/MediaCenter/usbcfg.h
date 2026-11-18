@@ -79,8 +79,8 @@
 #define USB_IF_NUM          4
 #define USB_EP_NUM          32
 #define USB_MAX_PACKET0     64
-#define USB_DMA             1
-#define USB_DMA_EP          0x00000040
+#define USB_DMA             0   /* slave mode: no DMA, does not depend on DMA.sct */
+#define USB_DMA_EP          0x00000000
 
 
 /*

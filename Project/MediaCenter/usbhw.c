@@ -697,6 +697,7 @@ void USB_IRQHandler (void) {
 #if USB_SOF_EVENT
   /* Start of Frame Interrupt */
   if (disr & FRAME_INT) {
+    LPC_USB->DevIntClr = FRAME_INT;         /* FIX: clear the frame interrupt, otherwise it fires nonstop */
     USB_SOF_Event();
   }
 #endif

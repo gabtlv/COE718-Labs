@@ -94,7 +94,7 @@ void USB_SOF_Event (void) {
   extern volatile uint32_t SofCount;
   SofCount++;                               /* debug: count USB frames */
 #if USB_DMA == 0
-  if (USB_ReadEP(0x03, (BYTE *)&DataBuf[DataIn])) {
+  if (USB_ReadEP(0x03, (uint8_t *)&DataBuf[DataIn])) {
     /* Data Available */
     DataIn += P_S;                          /* Update Data In Index */
     DataIn &= B_S - 1;                      /* Adjust Data In Index */
