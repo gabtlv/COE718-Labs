@@ -45,9 +45,9 @@ static const photo_t photos[] = {
   { PHOTO_LITE_PIXEL_DATA, PHOTO_LITE_WIDTH, PHOTO_LITE_HEIGHT, "Lite 2" },
   { PHOTO_LITE_PIXEL_DATA, PHOTO_LITE_WIDTH, PHOTO_LITE_HEIGHT, "Lite 3" },
 #else
-  { PHOTO1_PIXEL_DATA, PHOTO1_WIDTH, PHOTO1_HEIGHT, "Placeholder 1" },
-  { PHOTO2_PIXEL_DATA, PHOTO2_WIDTH, PHOTO2_HEIGHT, "Placeholder 2" },
-  { PHOTO3_PIXEL_DATA, PHOTO3_WIDTH, PHOTO3_HEIGHT, "Placeholder 3" },
+  { PHOTO1_PIXEL_DATA, PHOTO1_WIDTH, PHOTO1_HEIGHT, "Hiding Place" },
+  { PHOTO2_PIXEL_DATA, PHOTO2_WIDTH, PHOTO2_HEIGHT, "Beard Cam" },
+  { PHOTO3_PIXEL_DATA, PHOTO3_WIDTH, PHOTO3_HEIGHT, "Fortnite" },
 #endif
 };
 #define N_PHOTOS  ((int)(sizeof(photos) / sizeof(photos[0])))
