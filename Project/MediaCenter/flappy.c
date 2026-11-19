@@ -260,6 +260,7 @@ static int run(void) {
 
   reset_game();
   if (!wait_for_start()) return 0;
+  last = g_ms;                           /* start timing at the first flap  */
 
   vy = FLAP_V;
   sound_tone(1200, 15);
@@ -274,7 +275,8 @@ static int run(void) {
     }
 
     if (g_ms - last < FRAME_MS) continue;
-    last += FRAME_MS;
+    if (g_ms - last >= 2 * FRAME_MS) last = g_ms;   /* never "catch up"   */
+    else last += FRAME_MS;
     frame++;
 
     /* ---- Pipes ------------------------------------------------------- */
